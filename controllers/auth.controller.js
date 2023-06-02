@@ -33,7 +33,6 @@ exports.login = async (req, res) => {
           res.status(400).send({ message: 'Login or password are incorrect' });
         }
       }
-      //const user = await User.create({ login, password: await bcrypt.hash(password, 10) });
     } else {
       res.status(400).send({ message: 'Bad request' });
     }
@@ -43,9 +42,5 @@ exports.login = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  if (req.session.login) {
-    res.send({ login: req.session.login });
-  } else {
-    res.status(401).send({ message: 'You are not authorized' });
-  }
+  res.send({ message: 'Logged' });
 };
