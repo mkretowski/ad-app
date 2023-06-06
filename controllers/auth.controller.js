@@ -1,16 +1,35 @@
 const User = require('../models/User.model');
 const bcrypt = require('bcryptjs');
+const getImageFiletype = require('../utils/getImageFiletype');
+const fs = require('fs');
+const sanitize = require('mongo-sanitize');
+
 exports.register = async (req, res) => {
   try {
-    const { login, password } = req.body;
-    if (login && typeof login === 'string' && password && typeof password === 'string') {
+    const login = sanitize(req.body.login);
+    const password = req.body.password;
+    const fileType = req.file ? await getImageFiletype(req.file) : 'unknown';
+    if (
+      login &&
+      typeof login === 'string' &&
+      password &&
+      typeof password === 'string' &&
+      req.file &&
+      ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+    ) {
+      const [, ext] = req.file.originalname.split('.');
+      if (ext !== 'png' && ext !== 'jpg' && ext !== 'jpeg' && ext !== 'gif') {
+        return res.status(400).send({ message: 'File extension is not correct' });
+      }
       const userWithLogin = await User.findOne({ login });
       if (userWithLogin) {
+        fs.unlinkSync('./public/uploads/' + req.file.filename);
         return res.status(409).send({ message: 'User with this login already exists' }); //409 - conflict
       }
-      const user = await User.create({ login, password: await bcrypt.hash(password, 10) });
+      const user = await User.create({ login, password: await bcrypt.hash(password, 10), image: req.file.filename });
       res.status(201).send({ message: 'User created:' + user.login });
     } else {
+      fs.unlinkSync('./public/uploads/' + req.file.filename);
       res.status(400).send({ message: 'Bad request' });
     }
   } catch (err) {
@@ -20,7 +39,8 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { login, password } = req.body;
+    const login = req.body.login;
+    const password = req.body.password;
     if (login && typeof login === 'string' && password && typeof password === 'string') {
       const user = await User.findOne({ login });
       if (!user) {

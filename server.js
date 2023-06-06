@@ -1,4 +1,5 @@
 const dotenv = require('dotenv').config();
+const helmet = require('helmet');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -16,6 +17,7 @@ app.listen(process.env.PORT || 8000, () => {
 connectToDB();
 
 //add middleware
+app.use(helmet());
 if (process.env.NODE_ENV !== 'production') {
   app.use(
     cors({
@@ -40,9 +42,10 @@ app.use(
 
 // serve static files from the React app
 app.use(express.static(path.join(__dirname, '/client/build')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 // add routes
-//app.use('/api', require('./routes/ads.routes'));
+app.use('/api', require('./routes/ads.routes'));
 app.use('/auth', require('./routes/auth.routes'));
 //app.use('/api', require('./routes/users.routes'));
 
