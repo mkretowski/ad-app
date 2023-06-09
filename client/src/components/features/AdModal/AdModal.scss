@@ -1,0 +1,14 @@
+.modal {
+  --bs-modal-width: 90vw !important;
+  p {
+    padding: 0;
+    margin: 0;
+    word-wrap: break-word;
+  }
+}
+
+@media (min-width: 900px) {
+  .modal {
+    --bs-modal-width: 900px !important;
+  }
+}
