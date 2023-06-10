@@ -1,10 +1,9 @@
-import { adsReducer, searchAdsStatusReducer } from './adsReducer';
+import { adsReducer } from './adsReducer';
 import { configureStore } from '@reduxjs/toolkit';
 
 const store = configureStore({
   reducer: {
     ads: adsReducer,
-    searchAdsStatus: searchAdsStatusReducer,
   },
 });
 

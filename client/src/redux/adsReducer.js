@@ -8,9 +8,6 @@ export const getAllAds = (state) => {
 export const getStatus = (state) => {
   return state.ads ? state.ads : state;
 };
-export const getSearchAdsStatus = (state) => {
-  return state.searchAdsStatus;
-};
 export const getAdById = ({ ads }, adId) => ads.data.find((ad) => ad._id === adId);
 
 //actions
@@ -64,12 +61,6 @@ export const fetchAds = createAsyncThunk('ads/fetchAds', async () => {
   return ads;
 });
 
-export const searchAdsRequest = createAsyncThunk('ads/searchAdRequest', async (searchPhrase) => {
-  const response = await fetch(API_URL + '/api/ads/search/' + searchPhrase);
-  const ads = await response.json();
-  return ads;
-});
-
 const adsSlice = createSlice({
   name: 'ads',
   initialState: {
@@ -89,30 +80,17 @@ const adsSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(fetchAds.pending, (state) => (state.status = 'loading'));
+    builder.addCase(fetchAds.pending, (state) => {
+      return { status: 'loading' };
+    });
     builder.addCase(fetchAds.fulfilled, (state, action) => {
       return { data: action.payload.sort((a, b) => a._id.localeCompare(b._id)), status: 'idle' };
     });
-    builder.addCase(fetchAds.rejected, (state, action) => (state.status = 'idle'));
+    builder.addCase(fetchAds.rejected, (state, action) => {
+      return { status: 'idle' };
+    });
   },
 });
 
-const searchAdsStatusSlice = createSlice({
-  name: 'searchAdsStatus',
-  initialState: 'idle',
-  extraReducers(builder) {
-    builder
-      .addCase(searchAdsRequest.pending, () => {
-        return 'loading';
-      })
-      .addCase(searchAdsRequest.fulfilled, () => {
-        return 'idle';
-      })
-      .addCase(searchAdsRequest.rejected, () => {
-        return 'idle';
-      });
-  },
-});
 export const { removeAd, addAd, updateAd } = adsSlice.actions;
 export const adsReducer = adsSlice.reducer;
-export const searchAdsStatusReducer = searchAdsStatusSlice.reducer;

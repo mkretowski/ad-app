@@ -8,12 +8,15 @@ exports.register = async (req, res) => {
   try {
     const login = sanitize(req.body.login);
     const password = req.body.password;
+    const phone = sanitize(req.body.phone);
     const fileType = req.file ? await getImageFiletype(req.file) : 'unknown';
     if (
       login &&
       typeof login === 'string' &&
       password &&
       typeof password === 'string' &&
+      phone &&
+      typeof phone === 'string' &&
       req.file &&
       ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
     ) {
@@ -26,7 +29,12 @@ exports.register = async (req, res) => {
         fs.unlinkSync('./public/uploads/' + req.file.filename);
         return res.status(409).send({ message: 'User with this login already exists' }); //409 - conflict
       }
-      const user = await User.create({ login, password: await bcrypt.hash(password, 10), image: req.file.filename });
+      const user = await User.create({
+        login,
+        password: await bcrypt.hash(password, 10),
+        phone,
+        image: req.file.filename,
+      });
       res.status(201).send({ message: 'User created:' + user.login });
     } else {
       fs.unlinkSync('./public/uploads/' + req.file.filename);

@@ -1,23 +1,33 @@
 import Ads from '../../features/Ads/Ads';
-import { Row, Col, Spinner, Form, Button } from 'react-bootstrap';
+import { Row, Spinner, Form, Button, Alert } from 'react-bootstrap';
 import PageTitle from '../../views/PageTitle/PageTitle';
-import { useSelector, useDispatch } from 'react-redux';
-import { getSearchAdsStatus } from '../../../redux/adsReducer';
 import { useState } from 'react';
-import { searchAdsRequest } from '../../../redux/adsReducer';
-
+import { API_URL } from '../../../config';
 const SearchAds = () => {
-  const dispatch = useDispatch();
-  const status = useSelector(getSearchAdsStatus);
   const [searchPhrase, setSearchPhrase] = useState('');
   const [ads, setAds] = useState([]);
-  const handleSubmit = async () => {
-    try {
-      const response = await dispatch(searchAdsRequest(searchPhrase)).unwrap();
-      setAds(response.ads ? response.ads : []);
-    } catch (rejectedValueOrSerializedError) {
-      console.log(rejectedValueOrSerializedError);
-    }
+  const [status, setStatus] = useState(null);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('loading');
+    setAds([]);
+
+    fetch(`${API_URL}/api/ads/search/${searchPhrase}`)
+      .then((res) => {
+        if (res.status === 200) {
+          res.json().then((data) => {
+            setAds(data.ads);
+            setStatus('success');
+          });
+        } else if (res.status === 404) {
+          setStatus('notFound');
+        } else {
+          setStatus('serverError');
+        }
+      })
+      .catch((err) => {
+        setStatus('serverError');
+      });
   };
 
   return (
@@ -26,13 +36,7 @@ const SearchAds = () => {
         <PageTitle>Search ads</PageTitle>
       </Row>
       <Row className='justify-content-center'>
-        <Form
-          className='d-flex col-lg-6 col-10 mb-3'
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-        >
+        <Form className='d-flex col-lg-6 col-10 mb-3' onSubmit={handleSubmit}>
           <Form.Control
             type='search'
             placeholder='Search'
@@ -47,9 +51,14 @@ const SearchAds = () => {
           </Button>
         </Form>
       </Row>
-      {status === 'loading' && <Spinner animation='border' variant='primary' />}
-      {!status && <Col className='text-center'>No ads to show...</Col>}
-      {status === 'idle' && <Ads ads={ads} />}
+      {status === 'loading' && <Spinner animation='border' variant='primary' className='d-block mx-auto' />}
+      {(status === 'success' || status === 'notFound') && <Ads ads={ads} />}
+      {status === 'serverError' && (
+        <Alert variant='danger'>
+          <Alert.Heading>Something went wrong...</Alert.Heading>
+          <p>Unexpected error... Try again!</p>
+        </Alert>
+      )}
     </>
   );
 };
