@@ -3,17 +3,20 @@ import PageTitle from '../../views/PageTitle/PageTitle';
 import { useState } from 'react';
 import { API_URL } from '../../../config';
 import { useDispatch } from 'react-redux';
-import { logIn } from '../../../redux/adsReducer';
+import { logIn } from '../../../redux/userReducer';
+import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError'
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const options = {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -25,7 +28,7 @@ const Login = () => {
         if (res.status === 200) {
           setStatus('success');
           dispatch(logIn(login));
-          //navigation
+          navigate('/');
         } else if (res.status === 400) {
           setStatus('clientError');
         } else {

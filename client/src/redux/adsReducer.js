@@ -66,7 +66,6 @@ const adsSlice = createSlice({
   initialState: {
     data: [],
     status: 'loading',
-    user: null,
   },
   reducers: {
     removeAd(state, action) {
@@ -78,9 +77,6 @@ const adsSlice = createSlice({
     },
     updateAd(state, action) {
       state.data = state.data.map((ad) => (ad.id === action.payload.id ? { ...ad, ...action.payload } : ad));
-    },
-    logIn(state, action) {
-      state.user = action.payload;
     },
   },
   extraReducers(builder) {
@@ -97,5 +93,5 @@ const adsSlice = createSlice({
   },
 });
 
-export const { removeAd, addAd, updateAd, logIn } = adsSlice.actions;
+export const { removeAd, addAd, updateAd } = adsSlice.actions;
 export const adsReducer = adsSlice.reducer;

@@ -70,7 +70,7 @@ exports.login = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  res.send({ message: 'Logged' });
+  res.send({ message: 'Logged', user: req.session.login.login });
 };
 
 exports.logout = async (req, res) => {

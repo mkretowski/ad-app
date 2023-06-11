@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <>
       <Row className='m-0 p-2 text-center'>
-        <PageTitle>All ads</PageTitle>
+        <PageTitle>Homepage</PageTitle>
       </Row>
       {status === 'loading' && <Spinner animation='border' variant='primary' className='d-block mx-auto' />}
       {!status && <Col className='text-center'>No ads to show...</Col>}

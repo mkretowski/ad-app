@@ -7,14 +7,17 @@ import Footer from './components/views/Footer/Footer';
 import Header from './components/views/Header/Header';
 import Register from './components/pages/Register/Register';
 import Login from './components/pages/Login/Login';
+import Logout from './components/pages/Logout/Logout';
 import { fetchAds } from './redux/adsReducer';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import { getUserRequest } from './redux/userReducer';
 const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchAds());
+    dispatch(getUserRequest());
   }, [dispatch]);
 
   return (
@@ -25,6 +28,7 @@ const App = () => {
         <Route path='/ads/search' element={<SearchAds />} />
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/logout' element={<Logout />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
       <Footer />
