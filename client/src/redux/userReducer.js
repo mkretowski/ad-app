@@ -2,7 +2,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { API_URL } from '../config';
 //selectors
 export const getUser = (state) => {
-  return state.user;
+  return state.user.user;
+};
+
+export const getUserStatus = (state) => {
+  return state.user.status;
 };
 
 //actions
@@ -24,28 +28,36 @@ export const getUserRequest = createAsyncThunk('user/getUser', async () => {
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: null,
+  initialState: {
+    user: null,
+    status: null,
+  },
   reducers: {
     logIn(state, action) {
-      return action.payload;
+      state.user = action.payload;
+      state.status = 'login';
     },
-    logOut() {
-      return null;
+    logOut(state) {
+      state.user = null;
+      state.status = 'logout';
+    },
+    resetStatus(state) {
+      state.status = null;
     },
   },
   extraReducers(builder) {
     builder
       .addCase(getUserRequest.pending, (state) => {
-        return null;
+        return { ...state, user: null };
       })
       .addCase(getUserRequest.fulfilled, (state, action) => {
-        return action.payload;
+        return { ...state, user: action.payload };
       })
       .addCase(getUserRequest.rejected, (state) => {
-        return null;
+        return { ...state, user: null };
       });
   },
 });
 
-export const { logIn, logOut } = userSlice.actions;
+export const { logIn, logOut, resetStatus } = userSlice.actions;
 export const userReducer = userSlice.reducer;
