@@ -2,35 +2,32 @@ import { Form, Button, Row, Alert, Spinner } from 'react-bootstrap';
 import PageTitle from '../../views/PageTitle/PageTitle';
 import { useState } from 'react';
 import { API_URL } from '../../../config';
-const Register = () => {
+import { useDispatch } from 'react-redux';
+import { logIn } from '../../../redux/adsReducer';
+const Login = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
-  const [avatar, setAvatar] = useState(null);
-  const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError', 'loginError'
-
+  const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError'
+  const dispatch = useDispatch();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const fd = new FormData();
-    fd.append('login', login);
-    fd.append('password', password);
-    fd.append('phone', phone);
-    fd.append('image', avatar);
-
     const options = {
       method: 'POST',
-      body: fd, //form-data
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ login, password }),
     };
 
-    fetch(`${API_URL}/auth/register`, options)
+    fetch(`${API_URL}/auth/login`, options)
       .then((res) => {
-        if (res.status === 201) {
+        if (res.status === 200) {
           setStatus('success');
+          dispatch(logIn(login));
+          //navigation
         } else if (res.status === 400) {
           setStatus('clientError');
-        } else if (res.status === 409) {
-          setStatus('loginError');
         } else {
           setStatus('serverError');
         }
@@ -43,14 +40,14 @@ const Register = () => {
   return (
     <>
       <Row className='m-0 p-2 text-center'>
-        <PageTitle>Register</PageTitle>
+        <PageTitle>Login</PageTitle>
       </Row>
       <Row className='p-3 justify-content-center'>
         <Form className='col-12 col-md-7 col-lg-4' onSubmit={handleSubmit}>
           {status === 'success' && (
             <Alert variant='success'>
               <Alert.Heading>Success</Alert.Heading>
-              <p>You have been successfuly registered! You can now log in...</p>
+              <p>You have been successfuly logged in!</p>
             </Alert>
           )}
 
@@ -63,15 +60,8 @@ const Register = () => {
 
           {status === 'clientError' && (
             <Alert variant='danger'>
-              <Alert.Heading>Not enough data</Alert.Heading>
-              <p>You have to fill all the fields.</p>
-            </Alert>
-          )}
-
-          {status === 'loginError' && (
-            <Alert variant='warning'>
-              <Alert.Heading>Login already in use</Alert.Heading>
-              <p>You have to use other login.</p>
+              <Alert.Heading>Incorrect data</Alert.Heading>
+              <p>Login or password are incorrect.</p>
             </Alert>
           )}
 
@@ -101,23 +91,8 @@ const Register = () => {
               placeholder='Password'
             />
           </Form.Group>
-          <Form.Group className='mb-3' controlId='formPhone'>
-            <Form.Label>Phone Number</Form.Label>
-            <Form.Control
-              type='tel'
-              value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-              }}
-              placeholder='Phone number'
-            />
-          </Form.Group>
-          <Form.Group className='mb-3' controlId='formFile'>
-            <Form.Label>Avatar</Form.Label>
-            <Form.Control type='file' onChange={(e) => setAvatar(e.target.files[0])} />
-          </Form.Group>
           <Button variant='primary' type='submit'>
-            Sign up
+            Sign in
           </Button>
         </Form>
       </Row>
@@ -125,4 +100,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;

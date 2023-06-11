@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
@@ -15,10 +15,10 @@ const NavBar = () => {
           <FontAwesomeIcon icon={faHouse} />
         </Nav.Link>
         <NavDropdown className='px-3' title={<FontAwesomeIcon icon={faUser} />}>
-          <NavDropdown.Item className='text-center' href='#action/3.1'>
+          <NavDropdown.Item className='text-center' as={Link} to='/login'>
             Sign in
           </NavDropdown.Item>
-          <NavDropdown.Item className='text-center' href='#action/3.2'>
+          <NavDropdown.Item className='text-center' as={Link} to='/register'>
             Sign up
           </NavDropdown.Item>
           <NavDropdown.Item className='text-center' href='#action/3.3'>
@@ -28,7 +28,7 @@ const NavBar = () => {
             My ads
           </NavDropdown.Item>
           <NavDropdown.Divider />
-          <NavDropdown.Item className='text-center' href='#action/3.5'>
+          <NavDropdown.Item className='text-center' as={Link} to='/logout'>
             Sign out
           </NavDropdown.Item>
         </NavDropdown>

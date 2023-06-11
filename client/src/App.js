@@ -6,6 +6,7 @@ import { Container } from 'react-bootstrap';
 import Footer from './components/views/Footer/Footer';
 import Header from './components/views/Header/Header';
 import Register from './components/pages/Register/Register';
+import Login from './components/pages/Login/Login';
 import { fetchAds } from './redux/adsReducer';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
@@ -23,6 +24,7 @@ const App = () => {
         <Route path='/' element={<Home />} />
         <Route path='/ads/search' element={<SearchAds />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/login' element={<Login />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
       <Footer />

@@ -66,6 +66,7 @@ const adsSlice = createSlice({
   initialState: {
     data: [],
     status: 'loading',
+    user: null,
   },
   reducers: {
     removeAd(state, action) {
@@ -78,19 +79,23 @@ const adsSlice = createSlice({
     updateAd(state, action) {
       state.data = state.data.map((ad) => (ad.id === action.payload.id ? { ...ad, ...action.payload } : ad));
     },
+    logIn(state, action) {
+      state.user = action.payload;
+    },
   },
   extraReducers(builder) {
-    builder.addCase(fetchAds.pending, (state) => {
-      return { status: 'loading' };
-    });
-    builder.addCase(fetchAds.fulfilled, (state, action) => {
-      return { data: action.payload.sort((a, b) => a._id.localeCompare(b._id)), status: 'idle' };
-    });
-    builder.addCase(fetchAds.rejected, (state, action) => {
-      return { status: 'idle' };
-    });
+    builder
+      .addCase(fetchAds.pending, (state) => {
+        return { ...state, status: 'loading' };
+      })
+      .addCase(fetchAds.fulfilled, (state, action) => {
+        return { ...state, data: action.payload.sort((a, b) => a._id.localeCompare(b._id)), status: 'idle' };
+      })
+      .addCase(fetchAds.rejected, (state) => {
+        return { ...state, status: 'idle' };
+      });
   },
 });
 
-export const { removeAd, addAd, updateAd } = adsSlice.actions;
+export const { removeAd, addAd, updateAd, logIn } = adsSlice.actions;
 export const adsReducer = adsSlice.reducer;
