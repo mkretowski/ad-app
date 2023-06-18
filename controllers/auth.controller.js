@@ -1,6 +1,6 @@
 const User = require('../models/User.model');
 const bcrypt = require('bcryptjs');
-const getImageFiletype = require('../utils/getImageFiletype');
+const getImageFiletype = require('../utils/getImageFileType');
 const fs = require('fs');
 const sanitize = require('mongo-sanitize');
 

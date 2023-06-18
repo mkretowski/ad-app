@@ -18,6 +18,7 @@ connectToDB();
 
 //add middleware
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+
 if (process.env.NODE_ENV !== 'production') {
   app.use(
     cors({
@@ -29,7 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
 if (process.env.NODE_ENV === 'production') {
   app.use(
     cors({
-      origin: ['http://localhost:8000'],
+      origin: ['https://ad-app.mkretowski.repl.co'],
       credentials: true,
     })
   );
@@ -43,7 +44,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV !== 'production',
+      secure: process.env.NODE_ENV == 'production',
     },
   })
 );

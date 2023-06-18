@@ -5,7 +5,6 @@ const connectToDB = () => {
   let dbUri = '';
 
   if (NODE_ENV === 'production') {
-    //dbUri = 'mongodb://localhost:27017/adsDB';
     dbUri = `mongodb+srv://john-doe:${process.env.DB_PASS}@cluster0.ksgkrwz.mongodb.net/AdsDB?retryWrites=true&w=majority`;
   } else if (NODE_ENV === 'test') {
     dbUri = 'mongodb://localhost:27017/adsDBtest';

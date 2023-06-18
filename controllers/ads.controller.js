@@ -1,4 +1,4 @@
-const getImageFiletype = require('../utils/getImageFiletype');
+const getImageFiletype = require('../utils/getImageFileType');
 const Ad = require('../models/Ad.model');
 const fs = require('fs');
 const sanitize = require('mongo-sanitize');
