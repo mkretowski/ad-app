@@ -26,13 +26,20 @@ const Login = () => {
     fetch(`${API_URL}/auth/login`, options)
       .then((res) => {
         if (res.status === 200) {
-          setStatus('success');
-          dispatch(logIn(login));
-          navigate('/');
+          return res.json();
         } else if (res.status === 400) {
           setStatus('clientError');
         } else {
           setStatus('serverError');
+        }
+      })
+      .then((data) => {
+        if (data) {
+          const user = data.user;
+          const userId = data.userId;
+          setStatus('success');
+          dispatch(logIn({ user, userId }));
+          navigate('/');
         }
       })
       .catch((err) => {

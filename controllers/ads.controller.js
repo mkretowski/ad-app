@@ -33,18 +33,15 @@ exports.postNew = async (req, res) => {
     allowedTags: [],
     allowedAttributes: {},
   });
-  const publicationDate = sanitizeHtml(req.body.publicationDate, {
-    allowedTags: [],
-    allowedAttributes: {},
-  });
   const localisation = sanitizeHtml(req.body.localisation, {
     allowedTags: [],
     allowedAttributes: {},
   });
   const price = parseFloat(req.body.price);
+  const date = new Date();
+  const publicationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
   const userId = req.session.login._id;
   const fileType = req.file ? await getImageFiletype(req.file) : 'unknown';
-
   if (
     title &&
     typeof title === 'string' &&
@@ -90,50 +87,60 @@ exports.postNew = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
+  let title = null;
+  let content = null;
+  let price = null;
+  let localisation = null;
+  const date = new Date();
+  const publicationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+
   const loggedUserId = req.session.login._id;
 
-  const price = req.body.price ? parseFloat(req.body.price) : undefined;
-  const title = sanitizeHtml(req.body.title, {
-    allowedTags: [],
-    allowedAttributes: {},
-  });
-  const content = sanitizeHtml(req.body.content, {
-    allowedTags: [],
-    allowedAttributes: {},
-  });
-  const publicationDate = sanitizeHtml(req.body.publicationDate, {
-    allowedTags: [],
-    allowedAttributes: {},
-  });
-  const localisation = sanitizeHtml(req.body.localisation, {
-    allowedTags: [],
-    allowedAttributes: {},
-  });
-  if (title) {
-    if (!(typeof title === 'string' && title.length >= 10 && title.length <= 50)) {
+  if (req.body.title) {
+    const sanitizedTitle = sanitizeHtml(req.body.title, {
+      allowedTags: [],
+      allowedAttributes: {},
+    });
+
+    if (typeof sanitizedTitle === 'string' && sanitizedTitle.length >= 10 && sanitizedTitle.length <= 50) {
+      title = sanitizedTitle;
+    } else {
       return res.status(400).send({ message: 'Invalid data' });
     }
   }
-  if (content) {
-    if (!(typeof content === 'string' && content.length >= 20 && content.length <= 1000)) {
+
+  if (req.body.content) {
+    const sanitizedContent = sanitizeHtml(req.body.content, {
+      allowedTags: [],
+      allowedAttributes: {},
+    });
+
+    if (typeof sanitizedContent === 'string' && sanitizedContent.length >= 20 && sanitizedContent.length <= 1000) {
+      content = sanitizedContent;
+    } else {
       return res.status(400).send({ message: 'Invalid data' });
     }
   }
-  if (price) {
-    if (!(typeof price === 'number')) {
+
+  if (req.body.price) {
+    const parsedPrice = parseFloat(req.body.price);
+
+    if (typeof parsedPrice === 'number') {
+      price = parsedPrice;
+    } else {
       return res.status(400).send({ message: 'Invalid data' });
     }
   }
-  if (publicationDate) {
-    if (!(typeof publicationDate === 'string')) {
-      return res.status(400).send({ message: 'Invalid data' });
-    }
-  }
-  if (localisation) {
-    if (!(typeof localisation === 'string')) {
-      if (req.file) {
-        fs.unlinkSync('./public/uploads/' + req.file.filename);
-      }
+
+  if (req.body.localisation) {
+    const sanitizedLocalisation = sanitizeHtml(req.body.localisation, {
+      allowedTags: [],
+      allowedAttributes: {},
+    });
+
+    if (typeof sanitizedLocalisation === 'string') {
+      localisation = sanitizedLocalisation;
+    } else {
       return res.status(400).send({ message: 'Invalid data' });
     }
   }
@@ -163,11 +170,11 @@ exports.update = async (req, res) => {
       req.params.id,
       {
         $set: {
-          title: title,
-          content: content,
-          price: price,
-          pubicationDate: publicationDate,
-          localisation: localisation,
+          ...(title && { title }),
+          ...(content && { content }),
+          ...(price && { price }),
+          ...(publicationDate && { publicationDate }),
+          ...(localisation && { localisation }),
           ...(req.file && req.file.filename && { image: req.file.filename }),
         },
       },

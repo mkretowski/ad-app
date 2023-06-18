@@ -2,7 +2,12 @@ import { Form, Button, Row, Alert, Spinner } from 'react-bootstrap';
 import PageTitle from '../../views/PageTitle/PageTitle';
 import { useState } from 'react';
 import { API_URL } from '../../../config';
+import { setUserStatus } from '../../../redux/userReducer';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 const Register = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
@@ -27,6 +32,8 @@ const Register = () => {
       .then((res) => {
         if (res.status === 201) {
           setStatus('success');
+          dispatch(setUserStatus('register'));
+          return navigate('/');
         } else if (res.status === 400) {
           setStatus('clientError');
         } else if (res.status === 409) {

@@ -9,26 +9,37 @@ export const getStatus = (state) => {
   return state.ads ? state.ads : state;
 };
 export const getAdById = ({ ads }, adId) => ads.data.find((ad) => ad._id === adId);
+export const getAdsByUser = ({ ads }, userId) => ads.data.filter((ad) => ad.userId === userId);
 
+export const getAdActionStatus = (state) => {
+  return state.ads.actionStatus;
+};
 //actions
 export const addAdRequest = createAsyncThunk('ads/addAdRequest', async (newAd) => {
+  const fd = new FormData();
+  fd.append('title', newAd.title);
+  fd.append('price', newAd.price);
+  fd.append('localisation', newAd.localisation);
+  fd.append('image', newAd.image);
+  fd.append('content', newAd.content);
+
   const options = {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(newAd),
+    credentials: 'include',
+    body: fd,
   };
 
   const response = await fetch(API_URL + '/api/ads', options);
   if (!response.ok) {
     throw new Error('Failed to add ad');
   }
+  return response.status;
 });
 
 export const removeAdRequest = createAsyncThunk('ads/removeAdRequest', async (ad) => {
   const options = {
     method: 'DELETE',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -38,21 +49,38 @@ export const removeAdRequest = createAsyncThunk('ads/removeAdRequest', async (ad
   if (!response.ok) {
     throw new Error('Failed to remove ad');
   }
+  return response.status;
 });
 
 export const updateAdRequest = createAsyncThunk('ads/addAdRequest', async (newProperties) => {
+  const fd = new FormData();
+  {
+    newProperties.title && fd.append('title', newProperties.title);
+  }
+  {
+    newProperties.price && fd.append('price', newProperties.price);
+  }
+  {
+    newProperties.localisation && fd.append('localisation', newProperties.localisation);
+  }
+  {
+    newProperties.image && fd.append('image', newProperties.image);
+  }
+  {
+    newProperties.content && fd.append('content', newProperties.content);
+  }
+
   const options = {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(newProperties),
+    credentials: 'include',
+    body: fd,
   };
 
   const response = await fetch(API_URL + '/api/ads/' + newProperties.id, options);
   if (!response.ok) {
     throw new Error('Failed to update ad');
   }
+  return response.status;
 });
 
 export const fetchAds = createAsyncThunk('ads/fetchAds', async () => {
@@ -66,17 +94,18 @@ const adsSlice = createSlice({
   initialState: {
     data: [],
     status: 'loading',
+    actionStatus: null,
   },
   reducers: {
     removeAd(state, action) {
       const adId = action.payload;
-      state.data = state.data.filter((ad) => ad.id !== adId);
+      state.data = state.data.filter((ad) => ad._id !== adId);
     },
-    addAd(state, action) {
-      state.data = [...state.data, { ...action.payload }];
+    setActionStatus(state, action) {
+      state.actionStatus = action.payload;
     },
-    updateAd(state, action) {
-      state.data = state.data.map((ad) => (ad.id === action.payload.id ? { ...ad, ...action.payload } : ad));
+    resetActionStatus(state) {
+      state.actionStatus = null;
     },
   },
   extraReducers(builder) {
@@ -93,5 +122,5 @@ const adsSlice = createSlice({
   },
 });
 
-export const { removeAd, addAd, updateAd } = adsSlice.actions;
+export const { removeAd, setActionStatus, resetActionStatus } = adsSlice.actions;
 export const adsReducer = adsSlice.reducer;

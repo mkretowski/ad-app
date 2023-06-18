@@ -47,7 +47,6 @@ app.use(express.static(path.join(__dirname, '/public')));
 // add routes
 app.use('/api', require('./routes/ads.routes'));
 app.use('/auth', require('./routes/auth.routes'));
-//app.use('/api', require('./routes/users.routes'));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));

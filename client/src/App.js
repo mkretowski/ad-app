@@ -8,10 +8,13 @@ import Header from './components/views/Header/Header';
 import Register from './components/pages/Register/Register';
 import Login from './components/pages/Login/Login';
 import Logout from './components/pages/Logout/Logout';
+import AddAd from './components/pages/AddAd/AddAd';
+import MyAds from './components/pages/MyAds/MyAds';
 import { fetchAds } from './redux/adsReducer';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { getUserRequest } from './redux/userReducer';
+import AdUpdate from './components/pages/AdUpdate/AdUpdate';
 const App = () => {
   const dispatch = useDispatch();
 
@@ -29,6 +32,9 @@ const App = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
         <Route path='/logout' element={<Logout />} />
+        <Route path='/ads/new' element={<AddAd />} />
+        <Route path='/ads/update/:id' element={<AdUpdate />} />
+        <Route path='/ads/myads' element={<MyAds />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
       <Footer />

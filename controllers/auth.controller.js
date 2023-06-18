@@ -17,13 +17,18 @@ exports.register = async (req, res) => {
       typeof password === 'string' &&
       phone &&
       typeof phone === 'string' &&
-      req.file &&
-      ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+      req.file
     ) {
       const [, ext] = req.file.originalname.split('.');
-      if (ext !== 'png' && ext !== 'jpg' && ext !== 'jpeg' && ext !== 'gif') {
-        return res.status(400).send({ message: 'File extension is not correct' });
+
+      if (
+        !['png', 'jpg', 'jpeg', 'gif'].includes(ext.toLowerCase()) ||
+        !['image/png', 'image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+      ) {
+        fs.unlinkSync('./public/uploads/' + req.file.filename);
+        return res.status(400).send({ message: 'Invalid data' });
       }
+
       const userWithLogin = await User.findOne({ login });
       if (userWithLogin) {
         fs.unlinkSync('./public/uploads/' + req.file.filename);
@@ -56,7 +61,9 @@ exports.login = async (req, res) => {
       } else {
         if (bcrypt.compareSync(password, user.password)) {
           req.session.login = user;
-          res.status(200).send({ message: 'Login successful' });
+          res
+            .status(200)
+            .send({ message: 'Login successful', user: req.session.login.login, userId: req.session.login._id });
         } else {
           res.status(400).send({ message: 'Login or password are incorrect' });
         }
@@ -70,7 +77,7 @@ exports.login = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  res.send({ message: 'Logged', user: req.session.login.login });
+  res.send({ message: 'Logged', user: req.session.login.login, userId: req.session.login._id });
 };
 
 exports.logout = async (req, res) => {

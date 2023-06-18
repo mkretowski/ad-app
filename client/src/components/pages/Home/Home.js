@@ -3,8 +3,8 @@ import { Row, Col, Spinner } from 'react-bootstrap';
 import PageTitle from '../../views/PageTitle/PageTitle';
 import { useSelector, useDispatch } from 'react-redux';
 import { getStatus, getAllAds } from '../../../redux/adsReducer';
-import { getUserStatus, resetStatus } from '../../../redux/userReducer';
-import LogToast from '../../features/LogToast/LogToast';
+import { getUserStatus, setUserStatus } from '../../../redux/userReducer';
+import InfoToast from '../../features/InfoToast/InfoToast';
 import { useEffect } from 'react';
 
 const Home = () => {
@@ -15,7 +15,7 @@ const Home = () => {
 
   useEffect(() => {
     return () => {
-      dispatch(resetStatus());
+      dispatch(setUserStatus());
     };
   }, [dispatch]);
 
@@ -27,7 +27,11 @@ const Home = () => {
       {status === 'loading' && <Spinner animation='border' variant='primary' className='d-block mx-auto' />}
       {!status && <Col className='text-center'>No ads to show...</Col>}
       {status === 'idle' && <Ads ads={ads} />}
-      {userStatus && <LogToast action={userStatus}></LogToast>}
+      {userStatus === 'login' && <InfoToast type={'Success'} action={'You have been successfuly login!'}></InfoToast>}
+      {userStatus === 'logout' && <InfoToast type={'Success'} action={'You have been successfuly logout!'}></InfoToast>}
+      {userStatus === 'register' && (
+        <InfoToast type={'Success'} action={'You have been successfuly registered!'}></InfoToast>
+      )}
     </>
   );
 };

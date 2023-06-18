@@ -29,13 +29,13 @@ const NavBar = () => {
             </NavDropdown.Item>
           )}
           {user && (
-            <NavDropdown.Item className='text-center' href='#action/3.3'>
-              My profile
+            <NavDropdown.Item className='text-center' as={Link} to='/ads/myads'>
+              My ads
             </NavDropdown.Item>
           )}
           {user && (
-            <NavDropdown.Item className='text-center' href='#action/3.4'>
-              My ads
+            <NavDropdown.Item className='text-center' as={Link} to='/ads/new'>
+              Add new ad
             </NavDropdown.Item>
           )}
           {user && <NavDropdown.Divider />}

@@ -11,13 +11,19 @@ const Ads = ({ ads }) => {
   if (ads.length === 0) return <Col className='text-center'>No ads to show...</Col>;
   return (
     <>
-      <Row className='p-2 m-0 text-center justify-content-center align-items-stretch'>
+      <Row className='p-2 m-0 text-center justify-content-center'>
         {ads.map((ad) => (
-          <Col key={ad._id} className='col-12 col-lg-4 m-0 p-3'>
+          <Col key={ad._id} className='col-12 col-xl-4 col-md-6 m-0 p-3'>
             <Card className='h-100'>
-              <Card.Img variant='top' src={`${API_URL}/uploads/${ad.image}`} alt={ad.title} />
+              <Card.Img
+                className='object-fit-cover'
+                style={{ height: '18rem' }}
+                variant='top'
+                src={`${API_URL}/uploads/${ad.image}`}
+                alt={ad.title}
+              />
               <Card.Body className='d-flex flex-column'>
-                <Card.Title>{ad.title}</Card.Title>
+                <Card.Title className='my-auto'>{ad.title}</Card.Title>
                 <Card.Text className='mx-2 my-0 text-start'>
                   <strong>Localisation:</strong> {ad.localisation}
                 </Card.Text>

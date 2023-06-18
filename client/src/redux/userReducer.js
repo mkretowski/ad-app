@@ -5,6 +5,10 @@ export const getUser = (state) => {
   return state.user.user;
 };
 
+export const getUserId = (state) => {
+  return state.user.userId;
+};
+
 export const getUserStatus = (state) => {
   return state.user.status;
 };
@@ -20,7 +24,8 @@ export const getUserRequest = createAsyncThunk('user/getUser', async () => {
   if (response.status === 200) {
     const data = await response.json();
     const user = data.user;
-    return user;
+    const userId = data.userId;
+    return { user, userId };
   } else {
     return null;
   }
@@ -30,19 +35,22 @@ const userSlice = createSlice({
   name: 'user',
   initialState: {
     user: null,
+    userId: null,
     status: null,
   },
   reducers: {
     logIn(state, action) {
-      state.user = action.payload;
+      state.user = action.payload.user;
+      state.userId = action.payload.userId;
       state.status = 'login';
     },
     logOut(state) {
       state.user = null;
+      state.userId = null;
       state.status = 'logout';
     },
-    resetStatus(state) {
-      state.status = null;
+    setUserStatus(state, action) {
+      state.status = action.payload;
     },
   },
   extraReducers(builder) {
@@ -51,7 +59,7 @@ const userSlice = createSlice({
         return { ...state, user: null };
       })
       .addCase(getUserRequest.fulfilled, (state, action) => {
-        return { ...state, user: action.payload };
+        return { ...state, user: action.payload?.user || null, userId: action.payload?.userId || null };
       })
       .addCase(getUserRequest.rejected, (state) => {
         return { ...state, user: null };
@@ -59,5 +67,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logIn, logOut, resetStatus } = userSlice.actions;
+export const { logIn, logOut, setUserStatus } = userSlice.actions;
 export const userReducer = userSlice.reducer;
