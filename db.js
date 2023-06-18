@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const connectToDB = () => {
-  const NODE_ENV = process.env.NODE_ENV;
+  const NODE_ENV = process.env.NODE_ENV_DB;
   let dbUri = '';
 
   if (NODE_ENV === 'production') {
-    dbUri = '';
+    dbUri = `mongodb+srv://john-doe:${process.env.DB_PASS}@cluster0.ksgkrwz.mongodb.net/AdsDB?retryWrites=true&w=majority`;
   } else if (NODE_ENV === 'test') {
     dbUri = 'mongodb://localhost:27017/adsDBtest';
   } else {
