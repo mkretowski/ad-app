@@ -17,7 +17,16 @@ app.listen(process.env.PORT || 8000, () => {
 connectToDB();
 
 //add middleware
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: {
+      directives: {
+        'img-src': ["'self'", 'data:', 'blob:'],
+      },
+    },
+  })
+);
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(
