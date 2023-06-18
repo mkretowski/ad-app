@@ -54,20 +54,24 @@ export const removeAdRequest = createAsyncThunk('ads/removeAdRequest', async (ad
 
 export const updateAdRequest = createAsyncThunk('ads/addAdRequest', async (newProperties) => {
   const fd = new FormData();
-  {
-    newProperties.title && fd.append('title', newProperties.title);
+  if (newProperties.title) {
+    fd.append('title', newProperties.title);
   }
-  {
-    newProperties.price && fd.append('price', newProperties.price);
+
+  if (newProperties.price) {
+    fd.append('price', newProperties.price);
   }
-  {
-    newProperties.localisation && fd.append('localisation', newProperties.localisation);
+
+  if (newProperties.localisation) {
+    fd.append('localisation', newProperties.localisation);
   }
-  {
-    newProperties.image && fd.append('image', newProperties.image);
+
+  if (newProperties.image) {
+    fd.append('image', newProperties.image);
   }
-  {
-    newProperties.content && fd.append('content', newProperties.content);
+
+  if (newProperties.content) {
+    fd.append('content', newProperties.content);
   }
 
   const options = {

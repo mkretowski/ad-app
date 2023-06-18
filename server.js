@@ -26,6 +26,14 @@ if (process.env.NODE_ENV !== 'production') {
     })
   );
 }
+if (process.env.NODE_ENV === 'production') {
+  app.use(
+    cors({
+      origin: ['http://localhost:8000'],
+      credentials: true,
+    })
+  );
+}
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
@@ -35,7 +43,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV == 'production',
+      secure: process.env.NODE_ENV !== 'production',
     },
   })
 );
